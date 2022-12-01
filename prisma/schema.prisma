@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// menyiapkan tabel users
+model Users {
+  // nama tabel   tipe data   keterangan
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  // foreign key
+  Notes Notes[] // satu user bisa memiliki banyak notes
+}
+
+// menyiapkan tabel note
+model Notes {
+  // nama tabel   tipe data   keterangan
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  title     String
+  body      String
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  // melakukan relasi antar tabel
+  // mengambil variabel   mengambil model     melakukan relasi
+  users Users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  // fungsi cascade yaitu : apabila users tersebut didelete maka model notes nya juga akan didelete
+}
